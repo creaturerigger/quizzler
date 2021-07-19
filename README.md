@@ -1,6 +1,6 @@
 # quizzler
 
-A new Flutter project.
+A new Flutter project for a simple quiz application.
 
 ## Getting Started
 
