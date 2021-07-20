@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(Quizzler());
 
-class Quizzler extends StatelessWidget {
-  // This widget is the root of your application.
+class Quizzler extends StatelessWidget {  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
