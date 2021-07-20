@@ -4,12 +4,11 @@ import 'Question.dart';
 void main() => runApp(Quizzler());
 
 class Quizzler extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.grey.shade900,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
