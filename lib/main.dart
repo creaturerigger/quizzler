@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 QuizBrain quizBrain = QuizBrain();
 
@@ -30,7 +31,63 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  int indexOfQuestion = 0;
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getCorrectAnswer();
+
+    setState(() {
+      if (!quizBrain.isFinished()) {
+        if (userPickedAnswer == correctAnswer) {
+          scoreKeeper.add(Icon(Icons.check, color: Colors.green,));
+        } else {
+          scoreKeeper.add(Icon(Icons.close, color: Colors.red,));
+        }
+        quizBrain.nextQuestion();
+      } else {
+        showAlert(context);
+        quizBrain.resetQuiz();
+        scoreKeeper.clear();
+      }
+    });
+  }
+
+  showAlert(context) async{
+    int numberOfCorrectAnswers = scoreKeeper.where((element) => element.color == Colors.green).length;
+    await Alert(
+      context: context,
+      title: "Quiz finished",
+      desc: "Congratulations! You finished the quiz successfully. You got "
+          "$numberOfCorrectAnswers correct answers out of "
+          "${quizBrain.getNumberOfQuestions()} questions!",
+      buttons: [
+        DialogButton(
+          child: Text("NEW QUIZ",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            ),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+      alertAnimation: fadeAlertAnimation,
+    ).show();
+  }
+
+  Widget fadeAlertAnimation(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child,
+      ) {
+    return Align(
+      child: FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +101,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain.questions[indexOfQuestion].questionText,
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -70,19 +127,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.questions[indexOfQuestion].questionAnswer;
-                if (correctAnswer) {
-                  print('User got the right');
-                } else {
-                  print('User got it wrong');
-                }
-                setState(() {
-                  if (indexOfQuestion < 2) {
-                    ++indexOfQuestion;
-                  } else {
-                    indexOfQuestion = 0;
-                  }
-                });
+                checkAnswer(true);
               },
             ),
           ),
@@ -103,19 +148,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                bool correctAnswer = quizBrain.questions[indexOfQuestion].questionAnswer;
-                if (!correctAnswer) {
-                  print('User got the right');
-                } else {
-                  print('User got it wrong');
-                }
-                setState(() {
-                  if (indexOfQuestion < 2) {
-                    ++indexOfQuestion;
-                  } else {
-                    indexOfQuestion = 0;
-                  }
-                });
+                checkAnswer(false);
               },
             ),
           ),
